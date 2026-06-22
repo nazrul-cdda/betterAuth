@@ -14,6 +14,20 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
+        sendResetPassword: async ({ user, url }, request) => {
+            void sendEmail({
+                to: user.email,
+                subject: "Reset your password",
+                text: `Click the link to reset your password: ${url}`,
+            });
+        },
+        onExistingUserSignUp: async ({ user }, request) => {
+            void sendEmail({
+                to: user.email,
+                subject: "Someone tried to sign up with your email",
+                text: `Hi ${user.name}, someone just tried to create an account using your email address. If this wasn't you, no action is needed.`,
+            });
+        },
     },
     socialProviders: {
         github: {
@@ -26,14 +40,14 @@ export const auth = betterAuth({
         sendOnSignIn: true,
         autoSignInAfterVerification: true,
         sendVerificationEmail: async ({ user, url }) => {
-          const modifiedURL = new URL(url);
-          modifiedURL.searchParams.set("callbackURL", "/dashboard");
-          void sendEmail({
-              to: user.email,
-              subject: "Verify your email address",
-              text: `Click the link to verify your email: ${modifiedURL}`,
-          });
-      },
+            const modifiedURL = new URL(url);
+            modifiedURL.searchParams.set("callbackURL", "/dashboard");
+            void sendEmail({
+                to: user.email,
+                subject: "Verify your email address",
+                text: `Click the link to verify your email: ${modifiedURL}`,
+            });
+        },
     },
     plugins: [nextCookies(), openAPI()],
 });

@@ -18,5 +18,13 @@ export const auth = betterAuth({
         clientSecret: process.env.GITHUB_CLIENT_SECRET!,
       },
     },
-    plugins: [nextCookies()],
+     emailVerification: {
+        sendVerificationEmail: async ({ user, url }, request) => {
+            void sendEmail({
+                to: user.email,
+                subject: "Verify your email address",
+                text: `Click the link to verify your email: ${url}`,
+            });
+        },
+    },
 });

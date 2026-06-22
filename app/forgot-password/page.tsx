@@ -12,16 +12,12 @@ export default function ForgotPasswordPage() {
   async function handleSubmit(formData: FormData) {
     const email = formData.get("email") as string;
 
-    await authClient.forgetPassword({
+    await authClient.requestPasswordReset({
       email,
       redirectTo: "/reset-password",
     }, {
-      onSuccess: () => {
-        setSubmitted(true);
-      },
-      onError: (ctx) => {
-        setError(ctx.error.message);
-      },
+      onSuccess: () => setSubmitted(true),
+      onError: (ctx) => setError(ctx.error.message),
     });
   }
 

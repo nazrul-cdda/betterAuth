@@ -12,16 +12,19 @@ export default function ResetPasswordPage() {
 
   async function handleSubmit(formData: FormData) {
     const newPassword = formData.get("newPassword") as string;
+    const token = new URLSearchParams(window.location.search).get("token");
+
+    if (!token) {
+      setError("Invalid or expired reset link.");
+      return;
+    }
 
     await authClient.resetPassword({
       newPassword,
+      token,
     }, {
-      onSuccess: () => {
-        router.push("/signin");
-      },
-      onError: (ctx) => {
-        setError(ctx.error.message);
-      },
+      onSuccess: () => router.push("/signin"),
+      onError: (ctx) => setError(ctx.error.message),
     });
   }
 

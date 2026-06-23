@@ -1,0 +1,13 @@
+{
+  "signIn": {
+    "title": "Sign In",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "submit": "Sign In",
+    "errors": {
+      "verifyEmail": "Please verify your email address",
+      "generic": "Something went wrong"
+    }
+  }
+}

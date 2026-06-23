@@ -1,0 +1,13 @@
+{
+  "signIn": {
+    "title": "Se connecter",
+    "email": "Adresse e-mail",
+    "password": "Mot de passe",
+    "forgotPassword": "Mot de passe oublié ?",
+    "submit": "Se connecter",
+    "errors": {
+      "verifyEmail": "Veuillez vérifier votre adresse e-mail",
+      "generic": "Une erreur s'est produite"
+    }
+  }
+}

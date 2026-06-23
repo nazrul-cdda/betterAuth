@@ -2,10 +2,10 @@ import { headers } from "next/headers";
 import Link from "next/link";
 
 import { Button } from "@/features/shared/components/ui/button";
-import { auth } from "./lib/auth";
-import { GithubSignInButton } from "./components/github-signin-button";
+import { auth } from "../lib/auth";
+import { GithubSignInButton } from "../components/github-signin-button";
+import { signOutAction } from "../actions/auth";
 
-import { signOutAction } from "./actions/auth";
 
 export default async function Home() {
   const session = await auth.api.getSession({

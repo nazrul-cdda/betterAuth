@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/features/shared/components/ui/button";
 import { Input } from "@/features/shared/components/ui/input";
-import { authClient } from "../lib/auth-client";
+import { authClient } from "@/app/lib/auth-client";
 
 export default function ResetPasswordPage() {
   const [error, setError] = useState("");

@@ -14,15 +14,22 @@ export default function SignUpPage() {
   const [serverError, setServerError] = useState("");
 
   const formik = useFormik<SignUpValues>({
-    initialValues: { name: "", email: "", password: "" },
+    initialValues: { name: "", email: "", password: "", confirmPassword: "" },
     validate: toFormikValidate(signUpSchema),
     onSubmit: async (values, { setSubmitting }) => {
       setServerError("");
 
-      await authClient.signUp.email(values, {
-        onSuccess: () => setSubmitted(true),
-        onError: (ctx) => setServerError(ctx.error.message),
-      });
+      await authClient.signUp.email(
+        {
+          name: values.name,
+          email: values.email,
+          password: values.password,
+        },
+        {
+          onSuccess: () => setSubmitted(true),
+          onError: (ctx) => setServerError(ctx.error.message),
+        }
+      );
 
       setSubmitting(false);
     },
@@ -82,7 +89,18 @@ export default function SignUpPage() {
             uppercase
             lowercase
             special
-            showRequirements
+          // showRequirements
+          />
+        </div>
+        <div>
+          <PasswordField
+            name="confirmPassword"
+            value={formik.values.confirmPassword}
+            onChange={formik.handleChange}
+            onBlur={formik.handleBlur}
+            error={formik.errors.confirmPassword}
+            touched={formik.touched.confirmPassword}
+            placeholder="Confirm Password"
           />
         </div>
         {serverError && <p className="text-red-500 text-sm">{serverError}</p>}

@@ -4,7 +4,7 @@ import { db } from "./db";
 import { nextCookies } from "better-auth/next-js";
 import * as schema from "@/auth-schema";
 import { sendEmail } from "./email";
-import { openAPI } from "better-auth/plugins";
+import { openAPI, organization } from "better-auth/plugins";
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -50,5 +50,5 @@ export const auth = betterAuth({
             });
         },
     },
-    plugins: [nextCookies(), openAPI()],
+    plugins: [nextCookies(), openAPI(), organization()],
 });

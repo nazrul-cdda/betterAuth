@@ -77,11 +77,12 @@ export default function SignUpPage() {
             touched={formik.touched.password}
             showStrength
             minLength={8}
-            maxLength={12}
+            maxLength={20}
             numeric
             uppercase
             lowercase
             special
+            showRequirements
           />
         </div>
         {serverError && <p className="text-red-500 text-sm">{serverError}</p>}

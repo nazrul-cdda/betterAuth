@@ -80,6 +80,8 @@ export default function SignUpPage() {
             maxLength={12}
             numeric
             uppercase
+            lowercase
+            special
           />
         </div>
         {serverError && <p className="text-red-500 text-sm">{serverError}</p>}

@@ -1,116 +1,23 @@
-"use client";
+// components/PasswordField.tsx
+"use client"
 
 import { useState } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Check, X } from "lucide-react";
+import zxcvbn from "zxcvbn";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-// --- password-strength configurations ---
+// --- StrengthMeter (driven by zxcvbn) ---
 
-interface StrengthConfig {
-  minLength?: number;
-  numeric?: boolean;
-  uppercase?: boolean;
-  special?: boolean;
-}
+const bgColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-emerald-500", "bg-green-600"];
+const textColors = ["text-red-500", "text-orange-500", "text-yellow-600", "text-emerald-500", "text-green-600"];
+const labels = ["Very weak", "Weak", "Fair", "Good", "Strong"];
 
-function getPasswordStrength(
-  password: string,
-  config: StrengthConfig = {}
-): {
-  score: 0 | 1 | 2 | 3 | 4;
-  label: string;
-} {
-  const {
-    minLength = 8,
-    numeric,
-    uppercase,
-    special,
-  } = config;
-
-  // If any rule prop is explicitly provided, we run in custom mode.
-  // Otherwise, default to evaluating all rules for backwards compatibility.
-  const isCustomMode =
-    config.minLength !== undefined ||
-    numeric !== undefined ||
-    uppercase !== undefined ||
-    special !== undefined;
-
-  const rules = {
-    length: true, // Always check length
-    uppercase: isCustomMode ? !!uppercase : true,
-    numeric: isCustomMode ? !!numeric : true,
-    special: isCustomMode ? !!special : true,
-  };
-
-  let totalRules = 0;
-  let passedRules = 0;
-
-  // 1. Min Length Rule
-  totalRules++;
-  if (password.length >= minLength) {
-    passedRules++;
-  }
-
-  // 2. Uppercase Letter Rule
-  if (rules.uppercase) {
-    totalRules++;
-    if (/[A-Z]/.test(password)) {
-      passedRules++;
-    }
-  }
-
-  // 3. Numeric Character Rule
-  if (rules.numeric) {
-    totalRules++;
-    if (/[0-9]/.test(password)) {
-      passedRules++;
-    }
-  }
-
-  // 4. Special Character Rule
-  if (rules.special) {
-    totalRules++;
-    if (/[^A-Za-z0-9]/.test(password)) {
-      passedRules++;
-    }
-  }
-
-  // Map ratio [0, 1] dynamically to standard 5-step score [0, 4]
-  const ratio = totalRules > 0 ? passedRules / totalRules : 0;
-  const score = Math.round(ratio * 4) as 0 | 1 | 2 | 3 | 4;
-
-  const labels = ["Very weak", "Weak", "Fair", "Good", "Strong"];
-  return { score, label: labels[score] };
-}
-
-// --- StrengthMeter ---
-
-const bgColors = [
-  "bg-red-500",      // Very weak
-  "bg-orange-500",   // Weak
-  "bg-yellow-500",   // Fair
-  "bg-emerald-500",  // Good
-  "bg-green-600",    // Strong
-];
-
-const textColors = [
-  "text-red-500",
-  "text-orange-500",
-  "text-yellow-600 dark:text-yellow-500",
-  "text-emerald-500",
-  "text-green-600 dark:text-green-500",
-];
-
-interface StrengthMeterProps extends StrengthConfig {
-  password: string;
-}
-
-function StrengthMeter({ password, ...config }: StrengthMeterProps) {
-  const { score, label } = getPasswordStrength(password, config);
+function StrengthMeter({ password }: { password: string }) {
+  const { score, feedback } = zxcvbn(password);
 
   return (
-    <div className="mt-2 space-y-1.5 transition-all duration-300">
+    <div className="mt-2 space-y-1.5">
       <div className="flex gap-1">
         {[0, 1, 2, 3, 4].map((i) => (
           <div
@@ -122,10 +29,55 @@ function StrengthMeter({ password, ...config }: StrengthMeterProps) {
         ))}
       </div>
       <div className="flex justify-between items-center text-xs">
-        <span className="text-gray-500 dark:text-gray-400">Password strength</span>
-        <span className={`font-semibold ${textColors[score]}`}>{label}</span>
+        <span className="text-gray-500 dark:text-gray-400">
+          {feedback.warning || "Password strength"}
+        </span>
+        <span className={`font-semibold ${textColors[score]}`}>{labels[score]}</span>
       </div>
     </div>
+  );
+}
+
+// --- RequirementsChecklist ---
+
+type Rules = {
+  minLength?: number;
+  numeric?: boolean;
+  uppercase?: boolean;
+  lowercase?: boolean;
+  special?: boolean;
+};
+
+function RequirementsChecklist({ password, rules }: { password: string; rules: Rules }) {
+  const items: { label: string; met: boolean }[] = [];
+
+  if (rules.minLength !== undefined) {
+    items.push({ label: `At least ${rules.minLength} characters`, met: password.length >= rules.minLength });
+  }
+  if (rules.numeric) {
+    items.push({ label: "Contains a number", met: /[0-9]/.test(password) });
+  }
+  if (rules.uppercase) {
+    items.push({ label: "Contains an uppercase letter", met: /[A-Z]/.test(password) });
+  }
+  if (rules.lowercase) {
+    items.push({ label: "Contains a lowercase letter", met: /[a-z]/.test(password) });
+  }
+  if (rules.special) {
+    items.push({ label: "Contains a special character", met: /[^A-Za-z0-9]/.test(password) });
+  }
+
+  if (items.length === 0) return null;
+
+  return (
+    <ul className="mt-2 space-y-1 text-xs">
+      {items.map((item) => (
+        <li key={item.label} className={`flex items-center gap-1.5 ${item.met ? "text-green-600" : "text-gray-500"}`}>
+          {item.met ? <Check size={12} /> : <X size={12} />}
+          {item.label}
+        </li>
+      ))}
+    </ul>
   );
 }
 
@@ -143,6 +95,7 @@ type PasswordFieldProps = {
   maxLength?: number;
   numeric?: boolean;
   uppercase?: boolean;
+  lowercase?: boolean;
   special?: boolean;
 };
 
@@ -158,9 +111,11 @@ export function PasswordField({
   maxLength,
   numeric,
   uppercase,
+  lowercase,
   special,
 }: PasswordFieldProps) {
   const [visible, setVisible] = useState(false);
+  const rules: Rules = { minLength, numeric, uppercase, lowercase, special };
 
   return (
     <div className="space-y-1 w-full">
@@ -175,7 +130,6 @@ export function PasswordField({
           maxLength={maxLength}
           className="pr-10"
         />
-
         <div className="absolute inset-y-0 right-1 flex items-center">
           <Button
             type="button"
@@ -191,19 +145,10 @@ export function PasswordField({
         </div>
       </div>
 
-      {touched && error && (
-        <p className="text-red-500 text-xs mt-1 animate-fadeIn">{error}</p>
-      )}
+      {touched && error && <p className="text-red-500 text-xs mt-1">{error}</p>}
 
-      {showStrength && value && (
-        <StrengthMeter
-          password={value}
-          minLength={minLength}
-          numeric={numeric}
-          uppercase={uppercase}
-          special={special}
-        />
-      )}
+      {showStrength && value && <StrengthMeter password={value} />}
+      {value && <RequirementsChecklist password={value} rules={rules} />}
     </div>
   );
 }

@@ -1,9 +1,9 @@
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Button } from "@/features/shared/components/ui/button";
 import { signOutAction } from "../../actions/auth";
 import { auth } from "../../lib/auth";
+import { Button } from "@/components/ui/button";
 
 export default async function Dashboard() {
   const session = await auth.api.getSession({

@@ -1,9 +1,9 @@
 "use client"
 
 import { useState } from "react";
-import { Button } from "@/features/shared/components/ui/button";
-import { Input } from "@/features/shared/components/ui/input";
 import { authClient } from "@/app/lib/auth-client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function ForgotPasswordPage() {
   const [submitted, setSubmitted] = useState(false);

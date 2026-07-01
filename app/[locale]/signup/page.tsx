@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { useFormik } from "formik";
-import { Button } from "@/features/shared/components/ui/button";
-import { Input } from "@/features/shared/components/ui/input";
 import { authClient } from "../../lib/auth-client";
 import { toFormikValidate } from "../../lib/zod-formkik";
 import { signUpSchema, SignUpValues } from "../../lib/validations/auth";
+import { PasswordField } from "@/app/components/PasswordField";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 export default function SignUpPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -67,17 +68,19 @@ export default function SignUpPage() {
           )}
         </div>
         <div>
-          <Input
+          <PasswordField
             name="password"
-            type="password"
-            placeholder="Password"
             value={formik.values.password}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            error={formik.errors.password}
+            touched={formik.touched.password}
+            showStrength
+            minLength={8}
+            maxLength={12}
+            numeric
+            uppercase
           />
-          {formik.touched.password && formik.errors.password && (
-            <p className="text-red-500 text-xs mt-1">{formik.errors.password}</p>
-          )}
         </div>
         {serverError && <p className="text-red-500 text-sm">{serverError}</p>}
         <Button type="submit" disabled={formik.isSubmitting}>

@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Button } from "@/features/shared/components/ui/button";
-import { Input } from "@/features/shared/components/ui/input";
 import { authClient } from "@/app/lib/auth-client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 type Props = {
   t: {

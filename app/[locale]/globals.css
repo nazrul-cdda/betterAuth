@@ -127,4 +127,17 @@
   html {
     @apply font-sans;
   }
+}@layer utilities {
+  @keyframes empty-state-float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-8px);
+    }
+  }
+
+  .animate-empty-state-float {
+    animation: empty-state-float 3s ease-in-out infinite;
+  }
 }

@@ -84,12 +84,12 @@ export default function SignUpPage() {
             touched={formik.touched.password}
             showStrength
             minLength={8}
-            maxLength={20}
+            maxLength={10}
             numeric
             uppercase
             lowercase
             special
-          // showRequirements
+            showRequirements
           />
         </div>
         <div>
